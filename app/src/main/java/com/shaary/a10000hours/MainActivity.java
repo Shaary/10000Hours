@@ -9,12 +9,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.shaary.a10000hours.db.TimerDataSource;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    protected TimerDataSource timerDataSource;
 
     private boolean isRunning = false;
     private long seconds = 0;
@@ -32,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        timerDataSource = new TimerDataSource(this);
+        timerDataSource.open();
 
         startButton = findViewById(R.id.start_button);
         resetButton = findViewById(R.id.reset_button);
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onPause: has bee called");
         super.onPause();
         saveTime();
+        timerDataSource.close();
     }
 
     @Override
@@ -73,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        timerDataSource.open();
         //retrieveTime();
         Calendar calendar = Calendar.getInstance();
         onResumeTime = calendar.getTimeInMillis();
