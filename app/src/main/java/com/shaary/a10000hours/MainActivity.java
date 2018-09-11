@@ -150,4 +150,9 @@ public class MainActivity extends AppCompatActivity {
         onPauseTime = sharedPreferences.getLong("onPauseTime", 0);
     }
 
+    public void onSaveClick(View view) {
+        timerDataSource.insertTimer(onPauseTime);
+    }
+
+    //TODO: check if the isRunning true when first start.
 }

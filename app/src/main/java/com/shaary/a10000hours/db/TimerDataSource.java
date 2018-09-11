@@ -25,19 +25,27 @@ public class TimerDataSource {
         database = timerHelper.getWritableDatabase();
     }
 
+    public void read() throws SQLiteException {
+        database = timerHelper.getReadableDatabase();
+    }
+
+    public SQLiteDatabase getDatabase() {
+        return database;
+    }
+
     // close
     public void close() {
         database.close();
     }
 
     // insert
-    public void insertTimer(Date date) {
+    public void insertTimer(long time) {
         database.beginTransaction();
 
         try {
             ContentValues contentValues = new ContentValues();
             // modify the method to take a string
-            contentValues.put(TimerHelper.COLUMN_DATE, 0);
+            contentValues.put(TimerHelper.COLUMN_DATE, time);
             database.insert(TimerHelper.TABLE_DATE_TIME, null, contentValues);
             database.setTransactionSuccessful();
         } finally {
