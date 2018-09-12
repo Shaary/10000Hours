@@ -1,5 +1,6 @@
 package com.shaary.a10000hours;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,8 +9,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.shaary.a10000hours.db.TimerDataSource;
+import com.shaary.a10000hours.db.TimerDatabaseHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,8 +20,11 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    protected TimerDataSource timerDataSource;
+    private static final String TAG = MainActivity.class.getSimpleName();
 
+    private TimerDatabaseHelper db;
+
+    //Timer vars
     private boolean isRunning = false;
     private long seconds = 0;
     private long startedTime = 0;
@@ -27,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private long onPauseTime = 0;
     private long onResumeTime = 0;
     private long onRelaunchTime = 0;
-    private static final String TAG = MainActivity.class.getSimpleName();
+
+    //UI vars
     private Button startButton;
     private Button resetButton;
     private TextView timeView;
@@ -37,8 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        timerDataSource = new TimerDataSource(this);
-        timerDataSource.open();
+        db = new TimerDatabaseHelper(this);
 
         startButton = findViewById(R.id.start_button);
         resetButton = findViewById(R.id.reset_button);
@@ -46,8 +51,12 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = getSharedPreferences("time", MODE_PRIVATE);
         long retrievedSeconds = sharedPref.getLong("seconds", 0);
+
+        //Check if saved time is not empty
         if (retrievedSeconds != 0) {
             Calendar calendar = Calendar.getInstance();
+
+            //Get time now and add time since the timer was started
             onRelaunchTime = calendar.getTimeInMillis();
             onPauseTime = sharedPref.getLong("onPauseTime", 0);
             isRunning = sharedPref.getBoolean("isRunning", false);
@@ -68,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onPause: has bee called");
         super.onPause();
         saveTime();
-        timerDataSource.close();
     }
 
     @Override
@@ -81,15 +89,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        timerDataSource.open();
         //retrieveTime();
         Calendar calendar = Calendar.getInstance();
         onResumeTime = calendar.getTimeInMillis();
-//        long diffTime = onResumeTime - onPauseTime;
-//        Date date = new Date(diffTime);
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
-//        String formattedDate = dateFormat.format(date);
-
     }
 
     private void runTimer() {
@@ -136,9 +138,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Calendar calendar = Calendar.getInstance();
         onPauseTime = calendar.getTimeInMillis();
-//        Date date = new Date(onPauseTime);
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());
-//        String formattedDate = dateFormat.format(date);
         editor.putLong("seconds", seconds);
         editor.putLong("onPauseTime", onPauseTime);
         editor.putBoolean("isRunning", isRunning);
@@ -151,8 +150,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSaveClick(View view) {
-        timerDataSource.insertTimer(onPauseTime);
+        AddData(onPauseTime);
+        Intent intent = new Intent(this, DatabaseActivity.class);
+        startActivity(intent);
+    }
+
+    private String dateFormatter(long time) {
+        Date date = new Date(time);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());
+       return dateFormat.format(date);
+    }
+
+    private void AddData(long time) {
+        boolean insertData = db.addData(time);
+
+        if(insertData==true){
+            Toast.makeText(this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(this, "Something went wrong :(", Toast.LENGTH_LONG).show();
+        }
     }
 
     //TODO: check if the isRunning true when first start.
+    //TODO: create a variable like timeNow that saves the amount of seconds that the timer ran
 }
