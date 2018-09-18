@@ -27,7 +27,7 @@
         android:layout_below="@+id/timer_view"
         android:layout_centerHorizontal="true"
         android:text="@string/start"
-        android:onClick="onStartClick"/>
+        android:onClick="startTimer"/>
 
     <Button
         android:id="@+id/reset_button"
@@ -36,15 +36,16 @@
         android:layout_below="@+id/start_button"
         android:layout_centerHorizontal="true"
         android:text="@string/reset"
-        android:onClick="onResetClick"/>
+        android:onClick="resetTimer"/>
 
     <Button
-        android:id="@+id/save_button"
+        android:id="@+id/db_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/reset_button"
         android:layout_centerHorizontal="true"
-        android:text="save"
-        android:onClick="onSaveClick"/>
+        android:text="History"
+        android:onClick="showDB"/>
+
 
 </RelativeLayout>

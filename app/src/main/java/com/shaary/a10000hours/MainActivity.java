@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    //DB var
     private TimerDatabaseHelper db;
 
     //Timer vars
@@ -30,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private long startedTime = 0;
     private long stoppedTime = 0;
     private long onPauseTime = 0;
-    private long onResumeTime = 0;
-    private long onRelaunchTime = 0;
 
     //UI vars
     private Button startButton;
@@ -57,19 +56,17 @@ public class MainActivity extends AppCompatActivity {
             Calendar calendar = Calendar.getInstance();
 
             //Get time now and add time since the timer was started
-            onRelaunchTime = calendar.getTimeInMillis();
+            long onRelaunchTime = calendar.getTimeInMillis();
             onPauseTime = sharedPref.getLong("onPauseTime", 0);
             isRunning = sharedPref.getBoolean("isRunning", false);
             if (isRunning) {
-                startButton.setText(R.string.pause_button_text);
+                startButton.setText(R.string.save_button);
                 seconds = retrievedSeconds + ((onRelaunchTime - onPauseTime)/1000);
             } else {
                 seconds = retrievedSeconds;
             }
         }
-
         runTimer();
-
     }
 
     @Override
@@ -91,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         //retrieveTime();
         Calendar calendar = Calendar.getInstance();
-        onResumeTime = calendar.getTimeInMillis();
+        long onResumeTime = calendar.getTimeInMillis();
     }
 
     private void runTimer() {
@@ -115,25 +112,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    public void onStartClick(View view) {
-        if (!isRunning) {
-            isRunning = true;
-            startButton.setText(R.string.pause_button_text);
-        } else {
-            isRunning = false;
-            startButton.setText(R.string.start_button_text);
-        }
-
-    }
-
-    public void onResetClick(View view) {
-        isRunning = false;
-        seconds = 0;
-        startButton.setText(R.string.start_button_text);
-    }
-
     private void saveTime() {
+        //Saving time to keep track of the timer when the app's stopped
         SharedPreferences sharedPreferences = getSharedPreferences("time", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Calendar calendar = Calendar.getInstance();
@@ -149,28 +129,59 @@ public class MainActivity extends AppCompatActivity {
         onPauseTime = sharedPreferences.getLong("onPauseTime", 0);
     }
 
-    public void onSaveClick(View view) {
-        AddData(onPauseTime);
+    //Button clicks methods start
+
+    public void startTimer(View view) {
+        //Checks if the timer is running and performs according actions
+        if (!isRunning) {
+            isRunning = true;
+            Calendar calendar = Calendar.getInstance();
+            startedTime = calendar.getTimeInMillis();
+            startButton.setText(R.string.save_button);
+        } else {
+            isRunning = false;
+            saveData();
+            seconds = 0;
+            startButton.setText(R.string.start_button_text);
+        }
+    }
+
+    public void resetTimer(View view) {
+        isRunning = false;
+        seconds = 0;
+        startButton.setText(R.string.start_button_text);
+    }
+
+    public void showDB(View view) {
         Intent intent = new Intent(this, DatabaseActivity.class);
         startActivity(intent);
+    }
+    //Button clicks end
+
+
+    public void saveData() {
+        Calendar calendar = Calendar.getInstance();
+        stoppedTime = calendar.getTimeInMillis();
+        long timeSpent = stoppedTime - startedTime;
+        AddData(startedTime, stoppedTime, timeSpent);
+    }
+
+
+    //Adds time to database
+    private void AddData(long startedTime, long stoppedTime, long timeSpent) {
+        boolean insertData = db.addData(startedTime, stoppedTime, timeSpent);
+
+        if(insertData){
+            Toast.makeText(this, "Data Saved!", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Something went wrong :(", Toast.LENGTH_LONG).show();
+        }
     }
 
     private String dateFormatter(long time) {
         Date date = new Date(time);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());
-       return dateFormat.format(date);
+        return dateFormat.format(date);
     }
 
-    private void AddData(long time) {
-        boolean insertData = db.addData(time);
-
-        if(insertData==true){
-            Toast.makeText(this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(this, "Something went wrong :(", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    //TODO: check if the isRunning true when first start.
-    //TODO: create a variable like timeNow that saves the amount of seconds that the timer ran
 }

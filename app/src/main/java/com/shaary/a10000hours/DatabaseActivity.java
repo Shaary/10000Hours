@@ -34,7 +34,7 @@ public class DatabaseActivity extends AppCompatActivity {
             Toast.makeText(this, "There are no contents in this list!",Toast.LENGTH_LONG).show();
         }else{
             while(cursor.moveToNext()){
-                theList.add(cursor.getString(1));
+                theList.add(cursor.getString(1) + " To " + cursor.getString(2) + " Total: " + cursor.getString(3));
                 ListAdapter listAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,theList);
                 listView.setAdapter(listAdapter);
             }
