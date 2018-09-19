@@ -65,6 +65,7 @@ public class TimerDatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    //TODO: move to a different class
     private String dateFormatter(long time) {
         Date date = new Date(time);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());

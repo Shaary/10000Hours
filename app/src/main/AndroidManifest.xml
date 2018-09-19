@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,7 +19,8 @@
 
         <service android:name=".TimerService" />
 
-        <activity android:name=".DatabaseActivity"></activity>
+        <activity android:name=".view.DatabaseActivity" />
+        <activity android:name=".view.TrackingActivity"></activity>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.shaary.a10000hours;
+package com.shaary.a10000hours.view;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +9,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.shaary.a10000hours.R;
 import com.shaary.a10000hours.db.TimerDatabaseHelper;
 
 import java.util.ArrayList;

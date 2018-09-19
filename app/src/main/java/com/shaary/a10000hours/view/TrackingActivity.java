@@ -1,26 +1,33 @@
-package com.shaary.a10000hours;
+package com.shaary.a10000hours.view;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.shaary.a10000hours.R;
 import com.shaary.a10000hours.db.TimerDatabaseHelper;
+import com.shaary.a10000hours.model.Timer;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class TrackingActivity extends AppCompatActivity {
+
+    public static final String TAG  = TrackingActivity.class.getSimpleName();
+
+    private Timer timer;
 
     //DB var
     private TimerDatabaseHelper db;
@@ -33,20 +40,19 @@ public class MainActivity extends AppCompatActivity {
     private long onPauseTime = 0;
 
     //UI vars
-    private Button startButton;
-    private Button resetButton;
-    private TextView timeView;
+    @BindView(R.id.start_button) Button startButton;
+    @BindView(R.id.reset_button) Button resetButton;
+    @BindView(R.id.timer_view) TextView timeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_tracking);
+        ButterKnife.bind(this);
+
+        timer = new Timer(this);
 
         db = new TimerDatabaseHelper(this);
-
-        startButton = findViewById(R.id.start_button);
-        resetButton = findViewById(R.id.reset_button);
-        timeView = findViewById(R.id.timer_view);
 
         SharedPreferences sharedPref = getSharedPreferences("time", MODE_PRIVATE);
         long retrievedSeconds = sharedPref.getLong("seconds", 0);
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         long onResumeTime = calendar.getTimeInMillis();
     }
 
-    private void runTimer() {
+    public void runTimer() {
         Calendar calendar = Calendar.getInstance();
         startedTime = calendar.getTimeInMillis();
         final Handler handler = new Handler();
@@ -183,5 +189,4 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());
         return dateFormat.format(date);
     }
-
 }
