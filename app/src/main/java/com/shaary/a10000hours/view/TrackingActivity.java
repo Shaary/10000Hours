@@ -12,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shaary.a10000hours.R;
+import com.shaary.a10000hours.contracts.TrackingActivityView;
+import com.shaary.a10000hours.presenter.TrackingActivityPresenter;
 import com.shaary.a10000hours.db.TimerDatabaseHelper;
 import com.shaary.a10000hours.model.Timer;
 
@@ -23,11 +25,12 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TrackingActivity extends AppCompatActivity {
+public class TrackingActivity extends AppCompatActivity implements TrackingActivityView{
 
     public static final String TAG  = TrackingActivity.class.getSimpleName();
 
     private Timer timer;
+    TrackingActivityPresenter presenter;
 
     //DB var
     private TimerDatabaseHelper db;
@@ -50,7 +53,10 @@ public class TrackingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tracking);
         ButterKnife.bind(this);
 
-        timer = new Timer(this);
+        timer = new Timer();
+
+        //Don't forget to add timerepository as a second param instead of null
+        presenter = new TrackingActivityPresenter(this, null, timer);
 
         db = new TimerDatabaseHelper(this);
 
@@ -72,7 +78,10 @@ public class TrackingActivity extends AppCompatActivity {
                 seconds = retrievedSeconds;
             }
         }
-        runTimer();
+        //runTimer();
+        presenter.runTimer();
+
+
     }
 
     @Override
@@ -139,23 +148,26 @@ public class TrackingActivity extends AppCompatActivity {
 
     public void startTimer(View view) {
         //Checks if the timer is running and performs according actions
-        if (!isRunning) {
-            isRunning = true;
-            Calendar calendar = Calendar.getInstance();
-            startedTime = calendar.getTimeInMillis();
-            startButton.setText(R.string.save_button);
-        } else {
-            isRunning = false;
-            saveData();
-            seconds = 0;
-            startButton.setText(R.string.start_button_text);
-        }
+        presenter.controllTimer();
+
+//        if (!isRunning) {
+//            isRunning = true;
+//            Calendar calendar = Calendar.getInstance();
+//            startedTime = calendar.getTimeInMillis();
+//            startButton.setText(R.string.save_button);
+//        } else {
+//            isRunning = false;
+//            saveData();
+//            seconds = 0;
+//            startButton.setText(R.string.start_button_text);
+//        }
     }
 
     public void resetTimer(View view) {
-        isRunning = false;
-        seconds = 0;
-        startButton.setText(R.string.start_button_text);
+//        isRunning = false;
+//        seconds = 0;
+//        startButton.setText(R.string.start_button_text);
+        presenter.resetTimer();
     }
 
     public void showDB(View view) {
@@ -164,14 +176,12 @@ public class TrackingActivity extends AppCompatActivity {
     }
     //Button clicks end
 
-
     public void saveData() {
         Calendar calendar = Calendar.getInstance();
         stoppedTime = calendar.getTimeInMillis();
         long timeSpent = stoppedTime - startedTime;
         AddData(startedTime, stoppedTime, timeSpent);
     }
-
 
     //Adds time to database
     private void AddData(long startedTime, long stoppedTime, long timeSpent) {
@@ -184,9 +194,22 @@ public class TrackingActivity extends AppCompatActivity {
         }
     }
 
-    private String dateFormatter(long time) {
-        Date date = new Date(time);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());
-        return dateFormat.format(date);
+    //The interface methods start
+
+    @Override
+    public void displayTime(String time) {
+        timeView.setText(time);
+    }
+
+    @Override
+    public void updateButtonName(String name) {
+        startButton.setText(name);
+    }
+
+    //TODO: create a timer method that will stop on double click start button
+    //TODO: hint: to stop timer use  handler.removeCallbacks(Runnable) to save resources
+    @Override
+    public void updateTimerView(String time) {
+        timeView.setText(time);
     }
 }

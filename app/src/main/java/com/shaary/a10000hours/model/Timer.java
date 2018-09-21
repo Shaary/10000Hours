@@ -24,9 +24,9 @@ public class Timer {
     private long stoppedTime = 0;
     private long onPauseTime = 0;
 
-    public Timer(Context context) {
-        this.context = context;
-    }
+//    public Timer(Context context) {
+//        this.context = context;
+//    }
 
     public boolean isRunning() {
         return isRunning;
@@ -112,5 +112,9 @@ public class Timer {
         Date date = new Date(time);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());
         return dateFormat.format(date);
+    }
+
+    public void increaseSeconds() {
+        seconds++;
     }
 }
