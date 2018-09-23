@@ -5,13 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import com.shaary.a10000hours.contracts.TimerRepository;
 
-public class TimerDatabaseHelper extends SQLiteOpenHelper {
+public class TimerDatabaseHelper extends SQLiteOpenHelper implements TimerRepository {
     public static final String DATABASE_NAME = "timer.db";
     public static final String TABLE_NAME = "timer_data";
     public static final String COL1 = "ID";
@@ -37,49 +34,38 @@ public class TimerDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(long startedTime, long stoppedTime, long timeSpent) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        String formattedStartTime = dateFormatter(startedTime);
-        String formattedStopTime = timeFormatter(stoppedTime);
-        String formattedTimeSpent = dateFormatterToMins(timeSpent);
-
-        contentValues.put(COL2, formattedStartTime);
-        contentValues.put(COL3, formattedStopTime);
-        contentValues.put(COL4, formattedTimeSpent);
-
-        long result = db.insert(TABLE_NAME, null, contentValues);
-
-        //if date as inserted incorrectly it will return -1
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     public Cursor getListContents() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
         return cursor;
     }
 
-    //TODO: move to a different class
-    private String dateFormatter(long time) {
-        Date date = new Date(time);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());
-        return dateFormat.format(date);
+    //TODO: find another way to reference to time in the array
+    @Override
+    public boolean add(String... items) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        String startTime = items[0];
+        String stopTime = items[1];
+        String timeSpent = items[2];
+
+        contentValues.put(COL2, startTime);
+        contentValues.put(COL3, stopTime);
+        contentValues.put(COL4, timeSpent);
+
+        long result = db.insert(TABLE_NAME, null, contentValues);
+
+        //if date as inserted incorrectly it will return -1
+        return result != -1;
     }
 
-    private String timeFormatter(long time) {
-        Date date = new Date(time);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss", Locale.getDefault());
-        return dateFormat.format(date);
+    @Override
+    public void update(long item) {
+
     }
 
-    private String dateFormatterToMins(long time) {
-        Log.d(TAG, "dateFormatterToMins: "  + (time / 1000 % 60));
-        return "" + time / (60 * 1000) % 60;
+    @Override
+    public void remove(long item) {
+
     }
 }
