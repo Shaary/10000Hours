@@ -1,46 +1,56 @@
 package com.shaary.a10000hours.view;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shaary.a10000hours.R;
+import com.shaary.a10000hours.contracts.MyViewHolderView;
 import com.shaary.a10000hours.model.Hobby;
+import com.shaary.a10000hours.presenter.MainActivityViewPresenter;
 
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
-    //Trying to make it with an object instead of simple string
-    List<Hobby> hobbies;
+    MainActivityViewPresenter presenter;
+    private Context context;
 
-    public RecyclerViewAdapter(List<Hobby> hobbies) {
-        this.hobbies = hobbies;
+    interface OnHobbyClickListener {
+
+    }
+
+    public RecyclerViewAdapter(MainActivityViewPresenter presenter) {
+        this.presenter = presenter;
+
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.hobbie_item_view, parent, false);
+        return new RecyclerViewAdapter.MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        if (!hobbies.isEmpty()) {
-            holder.hobby.setText(hobbies.get(position).getName());
-        }
+        presenter.setUpRecyclerView(position, holder);
 
     }
 
     @Override
     public int getItemCount() {
-        return hobbies.size();
+        return presenter.getHobbiesListSize();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements MyViewHolderView{
         ImageView image;
         TextView hobby;
         TextView time;
@@ -51,5 +61,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             hobby = itemView.findViewById(R.id.hobby_name);
             time = itemView.findViewById(R.id.hobby_time);
         }
+
+
+        @Override
+        public void setName(String name) {
+            hobby.setText(name);
+        }
+
+        @Override
+        public void setTime(String time) {
+            this.time.setText(time);
+        }
+
+        @Override
+        public void setImage(Drawable image) {
+            this.image.setImageDrawable(image);
+        }
+
+        //TODO: find a way to update adapter
+        @Override
+        public void refreshHobbiesList() {
+            notifyDataSetChanged();
+        }
     }
+
 }
