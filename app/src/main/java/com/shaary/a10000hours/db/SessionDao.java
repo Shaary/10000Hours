@@ -13,11 +13,11 @@ import java.util.List;
 
 @Dao
 public interface SessionDao {
-    @Query("SELECT * FROM Session")
-    LiveData<List<Session>> getAll();
+    @Query("SELECT * FROM Session WHERE skillId = :skillId")
+    LiveData<List<Session>> getAllForOneSkill(long skillId);
 
     @Query("SELECT * FROM Session WHERE timeId = :id")
-    Session getTimeById(long id);
+    Session getSessionById(long id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(Session session);
@@ -26,5 +26,5 @@ public interface SessionDao {
     void update(Session session);
 
     @Query("DELETE FROM session WHERE timeId = :id")
-    void deleteTimeById(long id);
+    void deleteSessionById(long id);
 }

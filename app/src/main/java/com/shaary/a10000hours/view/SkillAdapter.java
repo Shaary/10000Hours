@@ -1,7 +1,5 @@
 package com.shaary.a10000hours.view;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;
@@ -14,12 +12,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shaary.a10000hours.R;
-import com.shaary.a10000hours.contracts.MyViewHolderView;
 import com.shaary.a10000hours.model.Skill;
-import com.shaary.a10000hours.presenter.MainActivityViewPresenter;
 
 public class SkillAdapter extends ListAdapter<Skill, SkillAdapter.MyViewHolder> {
     public static final String TAG = SkillAdapter.class.getSimpleName();
+
+    private onHobbyClickListener listener;
+
+    public interface onHobbyClickListener {
+        void skillClicked(Skill skill);
+    }
 
     public SkillAdapter() {
         super(DIFF_CALLBACK);
@@ -38,8 +40,8 @@ public class SkillAdapter extends ListAdapter<Skill, SkillAdapter.MyViewHolder> 
         }
     };
 
-    interface OnHobbyClickListener {
-
+    public void setOnItemClickListener(onHobbyClickListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -67,6 +69,13 @@ public class SkillAdapter extends ListAdapter<Skill, SkillAdapter.MyViewHolder> 
             image = itemView.findViewById(R.id.hobby_image_view);
             hobby = itemView.findViewById(R.id.hobby_name);
             time = itemView.findViewById(R.id.hobby_time);
+
+            itemView.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.skillClicked(getItem(position));
+                }
+            });
         }
 
         public void onBind(Skill skill) {

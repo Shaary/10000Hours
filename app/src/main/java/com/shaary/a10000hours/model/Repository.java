@@ -21,15 +21,34 @@ public class Repository {
         skills = skillDao.getAll();
     }
 
-    public void insert(Skill skill) {
+    //TODO: move methods below onto separate thread
+    // For SessionDao
+    public void insertSession(Session session) {
+        sessionDao.insert(session);
+    }
+
+    public void deleteSession(long sessionId) {
+        sessionDao.deleteSessionById(sessionId);
+    }
+
+    public void updateSession(Session session) {
+        sessionDao.update(session);
+    }
+
+    public LiveData<List<Session>> getAllSessionsForOneSkill(long skillId) {
+        return sessionDao.getAllForOneSkill(skillId);
+    }
+
+    // For SkillDao
+    public void insertSkill(Skill skill) {
         skillDao.insert(skill);
     }
 
-    public void delete(long skillId) {
+    public void deleteSkill(long skillId) {
         skillDao.deleteSkillById(skillId);
     }
 
-    public void update(Skill skill) {
+    public void updateSkill(Skill skill) {
         skillDao.update(skill);
     }
 

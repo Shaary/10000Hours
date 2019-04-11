@@ -21,15 +21,15 @@ public class SkillViewModel extends AndroidViewModel {
     }
 
     public void insert(Skill skill){
-        repository.insert(skill);
+        repository.insertSkill(skill);
     }
 
     public void update(Skill skill) {
-        repository.update(skill);
+        repository.updateSkill(skill);
     }
 
     public void delete(Skill skill) {
-        repository.delete(skill.id);
+        repository.deleteSkill(skill.id);
     }
 
     public LiveData<List<Skill>> getAllSkills() {

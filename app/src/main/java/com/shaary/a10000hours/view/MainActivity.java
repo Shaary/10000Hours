@@ -2,6 +2,7 @@ package com.shaary.a10000hours.view;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +15,6 @@ import android.view.View;
 import com.shaary.a10000hours.R;
 import com.shaary.a10000hours.contracts.MainActivityView;
 import com.shaary.a10000hours.model.Skill;
-import com.shaary.a10000hours.presenter.MainActivityViewPresenter;
 import com.shaary.a10000hours.view_model.SkillViewModel;
 
 import java.util.List;
@@ -22,10 +22,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements CreateHobbyFragment.OnOkButtonListener, MainActivityView{
+public class MainActivity extends AppCompatActivity implements CreateHobbyFragment.OnOkButtonListener, SkillAdapter.onHobbyClickListener{
 
     private SkillViewModel skillViewModel;
-    MainActivityViewPresenter presenter;
 
     private SkillAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -40,8 +39,6 @@ public class MainActivity extends AppCompatActivity implements CreateHobbyFragme
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        presenter = new MainActivityViewPresenter(this);
-
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -50,12 +47,14 @@ public class MainActivity extends AppCompatActivity implements CreateHobbyFragme
 
         skillViewModel = ViewModelProviders.of(this).get(SkillViewModel.class);
         uiUpdate();
+        adapter.setOnItemClickListener(skill -> {
+            Intent intent = new Intent(this, TrackingActivity.class);
+            intent.putExtra("id", skill.id);
+            startActivity(intent);
+        });
     }
 
     public void fabClick(View view) {
-//        Intent intent = new Intent(this, TrackingActivity.class);
-//        startActivity(intent);
-
         CreateHobbyFragment createHobbyFragment = new CreateHobbyFragment();
         createHobbyFragment.show(getSupportFragmentManager(), "create_hobby");
     }
@@ -75,7 +74,13 @@ public class MainActivity extends AppCompatActivity implements CreateHobbyFragme
         skillViewModel.insert(skill);
         Log.d(TAG, "okClicked: name " + name);
         uiUpdate();
-//        presenter.addToList(name);
-//        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void skillClicked(Skill skill) {
+        Log.d(TAG, "skillClicked: clicked");
+        Intent intent = new Intent(this, TrackingActivity.class);
+        intent.putExtra("id", skill.id);
+        startActivity(intent);
     }
 }

@@ -1,9 +1,7 @@
 package com.shaary.a10000hours.view;
 
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,8 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.shaary.a10000hours.R;
-import com.shaary.a10000hours.presenter.CreateHobbyFragmentPresenter;
-import com.shaary.a10000hours.presenter.MainActivityViewPresenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

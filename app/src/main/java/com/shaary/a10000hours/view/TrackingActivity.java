@@ -19,14 +19,9 @@ import com.shaary.a10000hours.model.Session;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TrackingActivity extends AppCompatActivity implements TrackingActivityView{
+public class TrackingActivity extends AppCompatActivity {
 
     public static final String TAG  = TrackingActivity.class.getSimpleName();
-
-    TrackingActivityPresenter presenter;
-
-    //DB var
-    private TimerDatabaseHelper db;
 
     //UI vars
     @BindView(R.id.start_button) Button startButton;
@@ -40,30 +35,30 @@ public class TrackingActivity extends AppCompatActivity implements TrackingActiv
         ButterKnife.bind(this);
 
         Session timer = new Session();
-        db = new TimerDatabaseHelper(this);
-        SharedPreferences sharedPref = getSharedPreferences("time", MODE_PRIVATE);
-        presenter = new TrackingActivityPresenter(this, sharedPref, db, timer);
-
-        //Check if saved time is not empty
-        if (presenter.isSharedPrefEmpty() != 0) {
-            presenter.retrieveTime();
-        }
-
-        presenter.runTimer();
+//        db = new TimerDatabaseHelper(this);
+//        SharedPreferences sharedPref = getSharedPreferences("time", MODE_PRIVATE);
+//        presenter = new TrackingActivityPresenter(this, sharedPref, db, timer);
+//
+//        //Check if saved time is not empty
+//        if (presenter.isSharedPrefEmpty() != 0) {
+//            presenter.retrieveTime();
+//        }
+//
+//        presenter.runTimer();
     }
 
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause: has bee called");
         super.onPause();
-        presenter.saveTime();
+        //presenter.saveTime();
     }
 
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: has been called");
         super.onDestroy();
-        presenter.saveTime();
+        //presenter.saveTime();
     }
 
     @Override
@@ -75,35 +70,16 @@ public class TrackingActivity extends AppCompatActivity implements TrackingActiv
     //Button clicks methods --start--
     public void startTimer(View view) {
         //Checks if the timer is running and performs according actions
-        presenter.controlTimer();
+        //presenter.controlTimer();
     }
 
-    public void resetTimer(View view) {
-        presenter.resetTimer();
-    }
+//    public void resetTimer(View view) {
+//        presenter.resetTimer();
+//    }
 
     public void showDB(View view) {
         Intent intent = new Intent(this, SessionsActivity.class);
         startActivity(intent);
     }
     //Button clicks --end--
-
-
-    //The interface methods start
-    @Override
-    public void updateButtonName(String name) {
-        startButton.setText(name);
-    }
-
-    //TODO: create a timer method that will stop on double click start button
-    //TODO: hint: to stop timer use  handler.removeCallbacks(Runnable) to save resources
-    @Override
-    public void updateTimerView(String time) {
-        timeView.setText(time);
-    }
-
-    @Override
-    public void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
 }
