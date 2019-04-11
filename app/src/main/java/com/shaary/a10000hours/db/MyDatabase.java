@@ -6,19 +6,23 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
 import com.shaary.a10000hours.model.Session;
+import com.shaary.a10000hours.model.Skill;
 
-@Database(entities = {Session.class}, version = 1)
+@Database(entities = {Session.class, Skill.class}, version = 1)
 public abstract class MyDatabase extends RoomDatabase {
     public abstract SessionDao sessionDao();
+    public abstract SkillDao skillDao();
 
     private static volatile MyDatabase INSTANCE;
 
-    static MyDatabase getDatabase(final Context context) {
+    public static MyDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (MyDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             MyDatabase.class, "my_database")
+                            //Change this later to separate threads
+                            .allowMainThreadQueries()
                             .build();
                 }
             }

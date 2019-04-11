@@ -1,24 +1,33 @@
 package com.shaary.a10000hours.view;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.shaary.a10000hours.R;
 import com.shaary.a10000hours.contracts.MainActivityView;
+import com.shaary.a10000hours.model.Skill;
 import com.shaary.a10000hours.presenter.MainActivityViewPresenter;
+import com.shaary.a10000hours.view_model.SkillViewModel;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements CreateHobbyFragment.OnOkButtonListener, MainActivityView{
 
+    private SkillViewModel skillViewModel;
     MainActivityViewPresenter presenter;
 
-    private RecyclerViewAdapter adapter;
+    private SkillAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -36,8 +45,11 @@ public class MainActivity extends AppCompatActivity implements CreateHobbyFragme
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new RecyclerViewAdapter(presenter);
+        adapter = new SkillAdapter();
         recyclerView.setAdapter(adapter);
+
+        skillViewModel = ViewModelProviders.of(this).get(SkillViewModel.class);
+        uiUpdate();
     }
 
     public void fabClick(View view) {
@@ -48,9 +60,22 @@ public class MainActivity extends AppCompatActivity implements CreateHobbyFragme
         createHobbyFragment.show(getSupportFragmentManager(), "create_hobby");
     }
 
+    private void uiUpdate() {
+        skillViewModel.getAllSkills().observe(this, new Observer<List<Skill>>() {
+            @Override
+            public void onChanged(@Nullable List<Skill> skills) {
+                adapter.submitList(skills);
+            }
+        });
+    }
+
     @Override
     public void okClicked(String name) {
-        presenter.addToList(name);
-        adapter.notifyDataSetChanged();
+        Skill skill = new Skill(name);
+        skillViewModel.insert(skill);
+        Log.d(TAG, "okClicked: name " + name);
+        uiUpdate();
+//        presenter.addToList(name);
+//        adapter.notifyDataSetChanged();
     }
 }

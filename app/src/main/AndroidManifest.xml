@@ -19,7 +19,7 @@
 
         <service android:name=".TimerService" />
 
-        <activity android:name=".view.DatabaseActivity" />
+        <activity android:name=".view.SessionsActivity" />
         <activity android:name=".view.TrackingActivity"></activity>
     </application>
 

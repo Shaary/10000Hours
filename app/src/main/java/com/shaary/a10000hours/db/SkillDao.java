@@ -8,23 +8,24 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import com.shaary.a10000hours.model.Session;
+import com.shaary.a10000hours.model.Skill;
 
 import java.util.List;
 
 @Dao
-public interface SessionDao {
-    @Query("SELECT * FROM Session")
-    LiveData<List<Session>> getAll();
+public interface SkillDao {
+    @Query("SELECT * FROM Skill")
+    LiveData<List<Skill>> getAll();
 
-    @Query("SELECT * FROM Session WHERE timeId = :id")
-    Session getTimeById(long id);
+    @Query("SELECT * FROM skill WHERE id = :id")
+    Skill getSkillById(long id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insert(Session session);
+    long insert(Skill skill);
 
     @Update
-    void update(Session session);
+    void update(Skill skill);
 
-    @Query("DELETE FROM session WHERE timeId = :id")
-    void deleteTimeById(long id);
+    @Query("DELETE FROM skill WHERE id = :id")
+    void deleteSkillById(long id);
 }

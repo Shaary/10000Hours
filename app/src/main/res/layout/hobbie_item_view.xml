@@ -35,7 +35,8 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/hobby_image_view"
                 tools:text="Programming"
-                android:textSize="24sp"/>
+                android:textSize="24sp"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/hobby_time"

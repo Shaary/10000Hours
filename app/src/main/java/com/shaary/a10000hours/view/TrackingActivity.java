@@ -83,7 +83,7 @@ public class TrackingActivity extends AppCompatActivity implements TrackingActiv
     }
 
     public void showDB(View view) {
-        Intent intent = new Intent(this, DatabaseActivity.class);
+        Intent intent = new Intent(this, SessionsActivity.class);
         startActivity(intent);
     }
     //Button clicks --end--

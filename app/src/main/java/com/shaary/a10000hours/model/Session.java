@@ -1,13 +1,21 @@
 package com.shaary.a10000hours.model;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity
+@Entity(foreignKeys = @ForeignKey(entity = Skill.class,
+        parentColumns = "id",
+        childColumns = "skillId",
+        onDelete = ForeignKey.CASCADE
+))
 public class Session {
-
     @PrimaryKey (autoGenerate = true)
-    public int timeId;
+    public long timeId;
+    @ColumnInfo(index = true)
+    private long skillId;
     //Timer vars
     private boolean isRunning = false;
     private long seconds = 0;
@@ -17,6 +25,13 @@ public class Session {
     private long onPauseTime = 0;
     private long onRetrieveTime = 0;
 
+    public long getSkillId() {
+        return skillId;
+    }
+
+    public void setSkillId(long skillId) {
+        this.skillId = skillId;
+    }
 
     public boolean isRunning() {
         return isRunning;
@@ -70,3 +85,5 @@ public class Session {
         seconds++;
     }
 }
+
+

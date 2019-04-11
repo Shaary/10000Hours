@@ -1,23 +1,19 @@
 package com.shaary.a10000hours.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.PrimaryKey;
 import android.media.Image;
 
 import java.util.List;
 
+@Entity
 public class Skill {
 
+    @PrimaryKey(autoGenerate = true) public long id;
     private String name;
-    private Image image;
     private String time;
-    private List<Skill> hobbies;
-
-    public List<Skill> getHobbies() {
-        return hobbies;
-    }
-
-    public void setHobbies(List<Skill> hobbies) {
-        this.hobbies = hobbies;
-    }
 
     public Skill(String name) {
         this.name = name;
@@ -39,7 +35,4 @@ public class Skill {
         this.time = time;
     }
 
-    private class ImagesHolder {
-
-    }
 }
