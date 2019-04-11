@@ -14,9 +14,7 @@ import com.shaary.a10000hours.R;
 import com.shaary.a10000hours.contracts.TrackingActivityView;
 import com.shaary.a10000hours.presenter.TrackingActivityPresenter;
 import com.shaary.a10000hours.db.TimerDatabaseHelper;
-import com.shaary.a10000hours.model.Timer;
-
-import java.util.Calendar;
+import com.shaary.a10000hours.model.Session;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,7 +39,7 @@ public class TrackingActivity extends AppCompatActivity implements TrackingActiv
         setContentView(R.layout.activity_tracking);
         ButterKnife.bind(this);
 
-        Timer timer = new Timer();
+        Session timer = new Session();
         db = new TimerDatabaseHelper(this);
         SharedPreferences sharedPref = getSharedPreferences("time", MODE_PRIVATE);
         presenter = new TrackingActivityPresenter(this, sharedPref, db, timer);

@@ -9,11 +9,7 @@ import android.view.View;
 
 import com.shaary.a10000hours.R;
 import com.shaary.a10000hours.contracts.MainActivityView;
-import com.shaary.a10000hours.model.Hobby;
 import com.shaary.a10000hours.presenter.MainActivityViewPresenter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

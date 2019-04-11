@@ -1,7 +1,13 @@
 package com.shaary.a10000hours.model;
 
-public class Timer {
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
+@Entity
+public class Session {
+
+    @PrimaryKey (autoGenerate = true)
+    public int timeId;
     //Timer vars
     private boolean isRunning = false;
     private long seconds = 0;

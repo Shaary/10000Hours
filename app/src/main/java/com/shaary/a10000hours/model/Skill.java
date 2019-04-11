@@ -4,22 +4,22 @@ import android.media.Image;
 
 import java.util.List;
 
-public class Hobby {
+public class Skill {
 
     private String name;
     private Image image;
     private String time;
-    private List<Hobby> hobbies;
+    private List<Skill> hobbies;
 
-    public List<Hobby> getHobbies() {
+    public List<Skill> getHobbies() {
         return hobbies;
     }
 
-    public void setHobbies(List<Hobby> hobbies) {
+    public void setHobbies(List<Skill> hobbies) {
         this.hobbies = hobbies;
     }
 
-    public Hobby(String name) {
+    public Skill(String name) {
         this.name = name;
     }
 

@@ -1,14 +1,12 @@
 package com.shaary.a10000hours.presenter;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 
 import com.shaary.a10000hours.contracts.TrackingActivityView;
 import com.shaary.a10000hours.contracts.TimerRepository;
-import com.shaary.a10000hours.model.Timer;
-import com.shaary.a10000hours.view.DatabaseActivity;
+import com.shaary.a10000hours.model.Session;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,10 +19,10 @@ public class TrackingActivityPresenter {
     private TrackingActivityView view;
     private SharedPreferences sharedPreferences;
     private TimerRepository timerRepository;
-    private Timer timer;
+    private Session timer;
 
     //Creates an instance of a view through interface so it won't know about real activity
-    public TrackingActivityPresenter(TrackingActivityView view, SharedPreferences sharedPreferences, TimerRepository timerRepository, Timer timer) {
+    public TrackingActivityPresenter(TrackingActivityView view, SharedPreferences sharedPreferences, TimerRepository timerRepository, Session timer) {
         this.view = view;
         this.sharedPreferences = sharedPreferences;
         this.timerRepository = timerRepository;

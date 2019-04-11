@@ -12,10 +12,7 @@ import android.widget.TextView;
 
 import com.shaary.a10000hours.R;
 import com.shaary.a10000hours.contracts.MyViewHolderView;
-import com.shaary.a10000hours.model.Hobby;
 import com.shaary.a10000hours.presenter.MainActivityViewPresenter;
-
-import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 

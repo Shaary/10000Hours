@@ -1,10 +1,8 @@
 package com.shaary.a10000hours.presenter;
 
-import android.util.Log;
-
 import com.shaary.a10000hours.contracts.MainActivityView;
 import com.shaary.a10000hours.contracts.MyViewHolderView;
-import com.shaary.a10000hours.model.Hobby;
+import com.shaary.a10000hours.model.Skill;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +13,7 @@ public class MainActivityViewPresenter {
     private final MainActivityView mainView;
 
     //TODO: figure out how to save hobbies list so that it'll be shown even after closing the app
-    private List<Hobby> hobbies = new ArrayList<>();
+    private List<Skill> hobbies = new ArrayList<>();
 
     public MainActivityViewPresenter(MainActivityView mainView) {
 
@@ -28,13 +26,13 @@ public class MainActivityViewPresenter {
 
     public void addToList(String name) {
         //Log.d(TAG, "addToList: is called");
-        Hobby hobby = new Hobby(name);
+        Skill hobby = new Skill(name);
         hobbies.add(hobby);
     }
 
     public void setUpRecyclerView(int position, MyViewHolderView view) {
         //Log.d(TAG, "setUpRecyclerView: is called");
-        Hobby hobby = hobbies.get(position);
+        Skill hobby = hobbies.get(position);
         //Log.d(TAG, "setUpRecyclerView: name " + hobby.getName());
         view.setName(hobby.getName());
     }
