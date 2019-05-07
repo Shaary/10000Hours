@@ -3,12 +3,14 @@ package com.shaary.a10000hours.db;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import com.shaary.a10000hours.model.Session;
 import com.shaary.a10000hours.model.Skill;
 
 @Database(entities = {Session.class, Skill.class}, version = 1)
+@TypeConverters({DateTypeConverter.class})
 public abstract class MyDatabase extends RoomDatabase {
     public abstract SessionDao sessionDao();
     public abstract SkillDao skillDao();

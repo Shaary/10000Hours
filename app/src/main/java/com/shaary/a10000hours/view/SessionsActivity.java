@@ -1,22 +1,13 @@
 package com.shaary.a10000hours.view;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.shaary.a10000hours.R;
-import com.shaary.a10000hours.db.TimerDatabaseHelper;
 
-import java.util.ArrayList;
-
+// Shows previous records
 public class SessionsActivity extends AppCompatActivity {
-
-    private TimerDatabaseHelper db;
 
     private ListView listView;
 
@@ -34,5 +25,4 @@ public class SessionsActivity extends AppCompatActivity {
         super.onPause();
 
     }
-    //TODO: format the time
 }

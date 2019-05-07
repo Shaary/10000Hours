@@ -11,20 +11,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.shaary.a10000hours.R;
-import com.shaary.a10000hours.contracts.MainActivityView;
 import com.shaary.a10000hours.model.Skill;
-import com.shaary.a10000hours.view_model.SkillViewModel;
+import com.shaary.a10000hours.view_model.MainViewModel;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements CreateHobbyFragment.OnOkButtonListener, SkillAdapter.onHobbyClickListener{
+public class MainActivity extends AppCompatActivity implements CreateHobbyFragment.OnOkButtonListener {
 
-    private SkillViewModel skillViewModel;
+    public static final int ADD_SKILL_REQUEST = 1;
+    public static final int EDIT_SKILL_REQUEST = 2;
+
+    private MainViewModel mainViewModel;
 
     private SkillAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -45,12 +48,15 @@ public class MainActivity extends AppCompatActivity implements CreateHobbyFragme
         adapter = new SkillAdapter();
         recyclerView.setAdapter(adapter);
 
-        skillViewModel = ViewModelProviders.of(this).get(SkillViewModel.class);
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         uiUpdate();
         adapter.setOnItemClickListener(skill -> {
-            Intent intent = new Intent(this, TrackingActivity.class);
-            intent.putExtra("id", skill.id);
-            startActivity(intent);
+            Intent intent = new Intent(this, SkillActivity.class);
+            intent.putExtra(SkillActivity.EXTRA_ID, skill.id);
+            intent.putExtra(SkillActivity.EXTRA_NAME, skill.getName());
+            intent.putExtra(SkillActivity.EXTRA_TIME, skill.getTime());
+            intent.putExtra(SkillActivity.EXTRA_LVL, skill.getLvl());
+            startActivityForResult(intent, EDIT_SKILL_REQUEST);
         });
     }
 
@@ -60,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements CreateHobbyFragme
     }
 
     private void uiUpdate() {
-        skillViewModel.getAllSkills().observe(this, new Observer<List<Skill>>() {
+        mainViewModel.getAllSkills().observe(this, new Observer<List<Skill>>() {
             @Override
             public void onChanged(@Nullable List<Skill> skills) {
                 adapter.submitList(skills);
@@ -71,16 +77,33 @@ public class MainActivity extends AppCompatActivity implements CreateHobbyFragme
     @Override
     public void okClicked(String name) {
         Skill skill = new Skill(name);
-        skillViewModel.insert(skill);
+        mainViewModel.insert(skill);
+        Log.d(TAG, " new skill " + skill.getName());
         Log.d(TAG, "okClicked: name " + name);
         uiUpdate();
     }
 
     @Override
-    public void skillClicked(Skill skill) {
-        Log.d(TAG, "skillClicked: clicked");
-        Intent intent = new Intent(this, TrackingActivity.class);
-        intent.putExtra("id", skill.id);
-        startActivity(intent);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == EDIT_SKILL_REQUEST && resultCode == RESULT_OK) {
+            int id = data.getIntExtra(SkillActivity.EXTRA_ID, -1);
+
+            if (id == -1) {
+                Toast.makeText(this, "Skill can't be updated", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String name = data.getStringExtra(SkillActivity.EXTRA_NAME);
+            String time = data.getStringExtra(SkillActivity.EXTRA_TIME);
+            int level = data.getIntExtra(SkillActivity.EXTRA_LVL, 1);
+            //Date date = (Date) data.getSerializableExtra(AddNoteActivity.EXTRA_DATE);
+
+            Skill skill = new Skill(name, time, level);
+            skill.id = id;
+            mainViewModel.update(skill);
+            Toast.makeText(this, "Skill updated", Toast.LENGTH_SHORT).show();
+        }
     }
 }

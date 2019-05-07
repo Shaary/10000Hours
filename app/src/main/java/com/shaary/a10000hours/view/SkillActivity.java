@@ -1,50 +1,54 @@
 package com.shaary.a10000hours.view;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.shaary.a10000hours.R;
-import com.shaary.a10000hours.contracts.TrackingActivityView;
-import com.shaary.a10000hours.presenter.TrackingActivityPresenter;
-import com.shaary.a10000hours.db.TimerDatabaseHelper;
-import com.shaary.a10000hours.model.Session;
+import com.shaary.a10000hours.view_model.TrackingActivityViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TrackingActivity extends AppCompatActivity {
+// Shows skill 'main' screen
+public class SkillActivity extends AppCompatActivity {
 
-    public static final String TAG  = TrackingActivity.class.getSimpleName();
+    public static final String TAG  = SkillActivity.class.getSimpleName();
+
+    public static final String EXTRA_ID = "com.shaary.a10000hours.EXTRA_ID";
+    public static final String EXTRA_LVL = "com.shaary.a10000hours.EXTRA_LVL";
+    public static final String EXTRA_NAME = "com.shaary.a10000hours.EXTRA_NAME";
+    public static final String EXTRA_TIME = "com.shaary.a10000hours.EXTRA_TIME";
+
+    private TrackingActivityViewModel viewModel;
 
     //UI vars
-    @BindView(R.id.start_button) Button startButton;
-    @BindView(R.id.reset_button) Button resetButton;
-    @BindView(R.id.timer_view) TextView timeView;
+    @BindView(R.id.time_text) TextView timeView;
+    @BindView(R.id.skill_name_text) TextView skillName;
+    @BindView(R.id.level_text) TextView levelText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tracking);
+        setContentView(R.layout.activity_skill);
         ButterKnife.bind(this);
 
-        Session timer = new Session();
-//        db = new TimerDatabaseHelper(this);
-//        SharedPreferences sharedPref = getSharedPreferences("time", MODE_PRIVATE);
-//        presenter = new TrackingActivityPresenter(this, sharedPref, db, timer);
-//
-//        //Check if saved time is not empty
-//        if (presenter.isSharedPrefEmpty() != 0) {
-//            presenter.retrieveTime();
-//        }
-//
-//        presenter.runTimer();
+        viewModel = ViewModelProviders.of(this).get(TrackingActivityViewModel.class);
+
+        Intent intent = getIntent();
+        Log.d(TAG, "Skill name " + intent.getStringExtra(EXTRA_NAME));
+        timeView.setText(intent.getStringExtra(EXTRA_TIME));
+        skillName.setText(intent.getStringExtra(EXTRA_NAME));
+        levelText.setText("Level " + intent.getIntExtra(EXTRA_LVL, 1));
+
+
+
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.shaary.a10000hours.view_model;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.shaary.a10000hours.model.Repository;
@@ -13,12 +14,20 @@ import java.util.List;
 
 public class TrackingActivityViewModel extends AndroidViewModel {
     private Repository repository;
+    // Might not need it here
     private LiveData<List<Session>> sessions;
 
-    public TrackingActivityViewModel(@NonNull Application application, Skill skill) {
+    public TrackingActivityViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
-        sessions = repository.getAllSessionsForOneSkill(skill.id);
+    }
+
+    // To edit and update skills
+    public void update(Skill skill) {
+        repository.updateSkill(skill);
+    }
+    public void delete(Skill skill) {
+        repository.deleteSkill(skill.id);
     }
 
     public void insert(Session session) {

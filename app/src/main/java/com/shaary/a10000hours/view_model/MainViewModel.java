@@ -10,11 +10,11 @@ import com.shaary.a10000hours.model.Skill;
 
 import java.util.List;
 
-public class SkillViewModel extends AndroidViewModel {
+public class MainViewModel extends AndroidViewModel {
     private Repository repository;
     private LiveData<List<Skill>> skills;
 
-    public SkillViewModel(@NonNull Application application) {
+    public MainViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
         skills = repository.getAllSkills();
@@ -24,13 +24,14 @@ public class SkillViewModel extends AndroidViewModel {
         repository.insertSkill(skill);
     }
 
+    // Might not need them in the main activity
     public void update(Skill skill) {
         repository.updateSkill(skill);
     }
-
-    public void delete(Skill skill) {
-        repository.deleteSkill(skill.id);
-    }
+//
+//    public void delete(Skill skill) {
+//        repository.deleteSkill(skill.id);
+//    }
 
     public LiveData<List<Skill>> getAllSkills() {
         return skills;

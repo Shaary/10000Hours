@@ -55,7 +55,7 @@ public class SkillAdapter extends ListAdapter<Skill, SkillAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Skill currentSkill = getItem(position);
-        Log.d(TAG, "onBindViewHolder: curname " + currentSkill.getName());
+        //Log.d(TAG, "onBindViewHolder: curname " + currentSkill.getName());
         holder.onBind(currentSkill);
     }
 
