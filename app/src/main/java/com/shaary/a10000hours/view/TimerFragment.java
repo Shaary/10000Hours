@@ -6,8 +6,10 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,27 +45,45 @@ public class TimerFragment extends Fragment {
     private long seconds = 0;
     private long startedTime;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_timer, container, false);
         startButton = view.findViewById(R.id.start_button);
-        cancelButton = view.findViewById(R.id.cancel_button);
+        cancelButton = view.findViewById(R.id.reset_button);
         timerView = view.findViewById(R.id.timer_view);
 
         viewModel = ViewModelProviders.of(this).get(TimerViewModel.class);
 
+        final Observer<Long> elapsedTimeObserver = new Observer<Long>() {
+            @Override
+            public void onChanged(@Nullable final Long aLong) {
+                String newText = viewModel.timeFormat(aLong);
+                timerView.setText(newText);
+                Log.d("ChronoActivity3", "Updating timer");
+            }
+        };
+
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                subscribe();
+                if (startButton.getText().equals("Start")) {
+                    subscribe(elapsedTimeObserver);
+                    startButton.setText("Save");
+                } else {
+                    unsubscribe(elapsedTimeObserver);
+                    startButton.setText("Start");
+                }
+
             }
         });
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                unsubscribe(elapsedTimeObserver);
+                startButton.setText("Start");
             }
         });
 
@@ -139,34 +160,13 @@ public class TimerFragment extends Fragment {
                 "%d:%02d:%02d", hours, minutes, secs);
     }
 
-    private String dateFormatter(long time) {
-        Date date = new Date(time);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());
-        return dateFormat.format(date);
+    private void subscribe(Observer<Long> observer) {
+        viewModel.getElapsedTime().observe(this, observer);
     }
-
-    private String timeFormatter(long time) {
-        Date date = new Date(time);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss", Locale.getDefault());
-        return dateFormat.format(date);
-    }
-
-    private String dateFormatterToMins(long time) {
-        return "" + time / (60 * 1000) % 60;
-    }
-
-    private void subscribe() {
-        final Observer<Long> elapsedTimeObserver = new Observer<Long>() {
-            @Override
-            public void onChanged(@Nullable final Long aLong) {
-                String newText = TimerFragment.this.getResources().getString(
-                        R.string.seconds, aLong);
-                timerView.setText(newText);
-                Log.d("ChronoActivity3", "Updating timer");
-            }
-        };
-
-        viewModel.getElapsedTime().observe(this, elapsedTimeObserver);
+    private void unsubscribe(Observer<Long> observer) {
+        viewModel.getElapsedTime().removeObserver(observer);
+        viewModel.setInitialTime(SystemClock.elapsedRealtime());
+        timerView.setText("00:00:00");
     }
 
 }

@@ -18,7 +18,7 @@ public class Session {
     public long timeId;
     @ColumnInfo(index = true)
     private long skillId;
-    private long sessionTime = 0;
+    private String sessionTime = "00:00:00";
     private Date sessionDate;
 
 
@@ -38,11 +38,11 @@ public class Session {
         this.timeId = timeId;
     }
 
-    public long getSessionTime() {
+    public String getSessionTime() {
         return sessionTime;
     }
 
-    public void setSessionTime(long sessionTime) {
+    public void setSessionTime(String sessionTime) {
         this.sessionTime = sessionTime;
     }
 
