@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import com.shaary.a10000hours.model.Repository;
+import com.shaary.a10000hours.model.Session;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,13 +26,16 @@ public class TimerViewModel extends AndroidViewModel {
     private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
 
     private long mInitialTime;
+    private Timer timer;
 
     public TimerViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
-        mInitialTime = SystemClock.elapsedRealtime();
-        Timer timer = new Timer();
+    }
 
+    public void startTimer() {
+        mInitialTime = SystemClock.elapsedRealtime();
+        timer = new Timer();
         // Update the elapsed time every second.
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -41,19 +45,20 @@ public class TimerViewModel extends AndroidViewModel {
                 mElapsedTime.postValue(newValue);
             }
         }, ONE_SECOND, ONE_SECOND);
+    }
 
+    public void stopTimer() {
+        timer.cancel();
+        timer = null;
     }
 
     public LiveData<Long> getElapsedTime() {
         return mElapsedTime;
     }
 
-    public void saveTime(String time) {
-
-    }
-
-    public void setInitialTime(long mInitialTime) {
-        this.mInitialTime = mInitialTime;
+    public void saveTime(String time, long skillId) {
+        Session session = new Session(skillId, time, new Date());
+        repository.insertSession(session);
     }
 
     public String timeFormat(long totalSecs) {

@@ -44,6 +44,7 @@ public class TimerFragment extends Fragment {
     private boolean isRunning = false;
     private long seconds = 0;
     private long startedTime;
+    private long skillId;
 
 
     @Override
@@ -55,6 +56,8 @@ public class TimerFragment extends Fragment {
         timerView = view.findViewById(R.id.timer_view);
 
         viewModel = ViewModelProviders.of(this).get(TimerViewModel.class);
+
+        skillId = this.getArguments().getLong("skillId", 0);
 
         final Observer<Long> elapsedTimeObserver = new Observer<Long>() {
             @Override
@@ -69,9 +72,14 @@ public class TimerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (startButton.getText().equals("Start")) {
+                    viewModel.startTimer();
                     subscribe(elapsedTimeObserver);
                     startButton.setText("Save");
                 } else {
+                    viewModel.stopTimer();
+                    //Saves time to DB
+                    save(skillId, timerView.getText().toString());
+
                     unsubscribe(elapsedTimeObserver);
                     startButton.setText("Start");
                 }
@@ -88,6 +96,10 @@ public class TimerFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void save(long skillId, String time) {
+        viewModel.saveTime(time, skillId);
     }
 
     //Method for the activity to check if it needs to load data or not
@@ -165,7 +177,6 @@ public class TimerFragment extends Fragment {
     }
     private void unsubscribe(Observer<Long> observer) {
         viewModel.getElapsedTime().removeObserver(observer);
-        viewModel.setInitialTime(SystemClock.elapsedRealtime());
         timerView.setText("00:00:00");
     }
 

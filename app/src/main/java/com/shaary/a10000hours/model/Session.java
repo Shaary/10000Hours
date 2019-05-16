@@ -21,6 +21,11 @@ public class Session {
     private String sessionTime = "00:00:00";
     private Date sessionDate;
 
+    public Session(long skillId, String sessionTime, Date sessionDate) {
+        this.skillId = skillId;
+        this.sessionTime = sessionTime;
+        this.sessionDate = sessionDate;
+    }
 
     public long getSkillId() {
         return skillId;

@@ -32,6 +32,8 @@ public class SkillActivity extends AppCompatActivity {
     @BindView(R.id.skill_name_text) TextView skillName;
     @BindView(R.id.level_text) TextView levelText;
 
+    @BindView(R.id.history_button) Button historyButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,37 @@ public class SkillActivity extends AppCompatActivity {
         skillName.setText(intent.getStringExtra(EXTRA_NAME));
         levelText.setText("Level " + intent.getIntExtra(EXTRA_LVL, 1));
 
+        // Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.fragment_container) != null) {
 
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            // Create a new Fragment to be placed in the activity layout
+            TimerFragment timerFragment = new TimerFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            Bundle bundle = new Bundle();
+            bundle.putLong("skillId", intent.getLongExtra(EXTRA_ID, 0));
+            timerFragment.setArguments(bundle);
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, timerFragment).commit();
+        }
+
+        historyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Opens DB related to the skill
+            }
+        });
 
     }
 
