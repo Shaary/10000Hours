@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.shaary.a10000hours.R;
-import com.shaary.a10000hours.view_model.TrackingActivityViewModel;
+import com.shaary.a10000hours.view_model.SkillActivityViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,7 +25,9 @@ public class SkillActivity extends AppCompatActivity {
     public static final String EXTRA_NAME = "com.shaary.a10000hours.EXTRA_NAME";
     public static final String EXTRA_TIME = "com.shaary.a10000hours.EXTRA_TIME";
 
-    private TrackingActivityViewModel viewModel;
+    private SkillActivityViewModel viewModel;
+
+    private long skillId;
 
     //UI vars
     @BindView(R.id.time_text) TextView timeView;
@@ -41,10 +43,11 @@ public class SkillActivity extends AppCompatActivity {
         setContentView(R.layout.activity_skill);
         ButterKnife.bind(this);
 
-        viewModel = ViewModelProviders.of(this).get(TrackingActivityViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(SkillActivityViewModel.class);
 
         Intent intent = getIntent();
         Log.d(TAG, "Skill name " + intent.getStringExtra(EXTRA_NAME));
+        skillId = intent.getLongExtra(EXTRA_ID, 0);
         timeView.setText(intent.getStringExtra(EXTRA_TIME));
         skillName.setText(intent.getStringExtra(EXTRA_NAME));
         levelText.setText("Level " + intent.getIntExtra(EXTRA_LVL, 1));
@@ -78,6 +81,9 @@ public class SkillActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Opens DB related to the skill
+                Intent intent = new Intent(SkillActivity.this, SessionsActivity.class);
+                intent.putExtra(EXTRA_ID, skillId);
+                startActivity(intent);
             }
         });
 

@@ -12,12 +12,12 @@ import com.shaary.a10000hours.model.Skill;
 
 import java.util.List;
 
-public class TrackingActivityViewModel extends AndroidViewModel {
+public class SkillActivityViewModel extends AndroidViewModel {
     private Repository repository;
     // Might not need it here
     private LiveData<List<Session>> sessions;
 
-    public TrackingActivityViewModel(@NonNull Application application) {
+    public SkillActivityViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
     }
