@@ -60,7 +60,8 @@ public class SessionsAdapter extends ListAdapter<Session, SessionsAdapter.MyView
             editButton = itemView.findViewById(R.id.edit_session_button);
         }
         public void onBind(Session session) {
-            sessionText.setText(session.getSessionDate().toString() + " " + session.getSessionTime());
+            String date = android.text.format.DateFormat.format("yyyy-MM-dd", session.getSessionDate()).toString();
+            sessionText.setText(date + " " + session.getSessionTime());
         }
     }
 }

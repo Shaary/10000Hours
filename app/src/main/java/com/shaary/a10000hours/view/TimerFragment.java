@@ -59,40 +59,34 @@ public class TimerFragment extends Fragment {
 
         skillId = this.getArguments().getLong("skillId", 0);
 
+        // Updates timer
         final Observer<Long> elapsedTimeObserver = new Observer<Long>() {
             @Override
             public void onChanged(@Nullable final Long aLong) {
                 String newText = viewModel.timeFormat(aLong);
                 timerView.setText(newText);
-                Log.d("ChronoActivity3", "Updating timer");
             }
         };
 
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (startButton.getText().equals("Start")) {
-                    viewModel.startTimer();
-                    subscribe(elapsedTimeObserver);
-                    startButton.setText("Save");
-                } else {
-                    viewModel.stopTimer();
-                    //Saves time to DB
-                    save(skillId, timerView.getText().toString());
+        startButton.setOnClickListener(v -> {
+            if (startButton.getText().equals("Start")) {
+                viewModel.startTimer();
+                subscribe(elapsedTimeObserver);
+                startButton.setText("Save");
+            } else {
+                viewModel.stopTimer();
+                //Saves time to DB
+                save(skillId, timerView.getText().toString());
 
-                    unsubscribe(elapsedTimeObserver);
-                    startButton.setText("Start");
-                }
-
-            }
-        });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 unsubscribe(elapsedTimeObserver);
                 startButton.setText("Start");
             }
+
+        });
+
+        cancelButton.setOnClickListener(v -> {
+            unsubscribe(elapsedTimeObserver);
+            startButton.setText("Start");
         });
 
         return view;
@@ -144,26 +138,6 @@ public class TimerFragment extends Fragment {
         //started stopped spent
     }
 
-    public void runTimer() {
-        final Handler handler = new Handler();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                //boolean isRunning = timer.isRunning();
-                String time = getTime(seconds);
-                //view.updateTimerView(time);
-
-                if (isRunning) {
-                    seconds++;
-                    Log.d(TAG, "run: is running");
-                }
-
-                handler.postDelayed(this, 1000);
-            }
-        });
-    }
-
     private String getTime(long seconds) {
         long hours = seconds / 3600;
         long minutes = (seconds % 3600) / 60;
@@ -179,5 +153,4 @@ public class TimerFragment extends Fragment {
         viewModel.getElapsedTime().removeObserver(observer);
         timerView.setText("00:00:00");
     }
-
 }

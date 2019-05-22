@@ -6,7 +6,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.shaary.a10000hours.model.Repository;
@@ -22,6 +24,7 @@ public class TimerViewModel extends AndroidViewModel {
     private static final int ONE_SECOND = 1000;
 
     private Repository repository;
+    private SharedPreferences sharedPreferences;
 
     private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
 
@@ -31,10 +34,13 @@ public class TimerViewModel extends AndroidViewModel {
     public TimerViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application);
     }
 
     public void startTimer() {
+
         mInitialTime = SystemClock.elapsedRealtime();
+
         timer = new Timer();
         // Update the elapsed time every second.
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -73,5 +79,19 @@ public class TimerViewModel extends AndroidViewModel {
         Date date = new Date(time);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy hh:mm:ss", Locale.getDefault());
         return dateFormat.format(date);
+    }
+
+    public void sharedPrefSave() {
+        sharedPreferences.edit().putLong("initial time", mInitialTime).apply();
+    }
+
+    public String retrieveTime() {
+        mInitialTime = sharedPreferences.getLong("initial time", 0);
+        long totalTime = SystemClock.elapsedRealtime() - mInitialTime;
+        return timeFormat(totalTime);
+    }
+
+    public boolean isSharPrefEmpty() {
+        return mInitialTime == 0;
     }
 }

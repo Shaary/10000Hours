@@ -77,6 +77,7 @@ public class SkillActivity extends AppCompatActivity {
                     .add(R.id.fragment_container, timerFragment).commit();
         }
 
+        //TODO: history button stops working after rotation
         historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +87,6 @@ public class SkillActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     @Override
@@ -108,20 +108,4 @@ public class SkillActivity extends AppCompatActivity {
         Log.d(TAG, "onResume: has been called");
         super.onResume();
     }
-
-    //Button clicks methods --start--
-    public void startTimer(View view) {
-        //Checks if the timer is running and performs according actions
-        //presenter.controlTimer();
-    }
-
-//    public void resetTimer(View view) {
-//        presenter.resetTimer();
-//    }
-
-    public void showDB(View view) {
-        Intent intent = new Intent(this, SessionsActivity.class);
-        startActivity(intent);
-    }
-    //Button clicks --end--
 }
