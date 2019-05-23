@@ -68,6 +68,11 @@ public class TimerFragment extends Fragment {
             }
         };
 
+        if (!viewModel.isSharPrefEmpty()) {
+            subscribe(elapsedTimeObserver);
+            startButton.setText("Save");
+        }
+
         startButton.setOnClickListener(v -> {
             if (startButton.getText().equals("Start")) {
                 viewModel.startTimer();
@@ -152,5 +157,10 @@ public class TimerFragment extends Fragment {
     private void unsubscribe(Observer<Long> observer) {
         viewModel.getElapsedTime().removeObserver(observer);
         timerView.setText("00:00:00");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 }
