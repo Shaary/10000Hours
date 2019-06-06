@@ -2,8 +2,8 @@ package com.shaary.a10000hours.view;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -98,14 +98,14 @@ public class SkillActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy: has been called");
+        // Log.d(TAG, "onDestroy: has been called");
         super.onDestroy();
         //presenter.saveTime();
     }
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume: has been called");
+        // Log.d(TAG, "onResume: has been called");
         super.onResume();
     }
 }

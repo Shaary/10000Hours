@@ -3,14 +3,11 @@ package com.shaary.a10000hours.view;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +17,6 @@ import android.widget.TextView;
 import com.shaary.a10000hours.R;
 import com.shaary.a10000hours.view_model.TimerViewModel;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class TimerFragment extends Fragment {
 
     private static final String TAG = TimerFragment.class.getSimpleName();
+    public static final String SHAR_PREF = "shared prefs";
 
     // UI
     private Button startButton;
@@ -40,10 +33,6 @@ public class TimerFragment extends Fragment {
 
     private TimerViewModel viewModel;
 
-    private SharedPreferences sharedPreferences;
-    private boolean isRunning = false;
-    private long seconds = 0;
-    private long startedTime;
     private long skillId;
 
 
@@ -59,6 +48,8 @@ public class TimerFragment extends Fragment {
 
         skillId = this.getArguments().getLong("skillId", 0);
 
+        //viewModel.retrievePrefs();
+
         // Updates timer
         final Observer<Long> elapsedTimeObserver = new Observer<Long>() {
             @Override
@@ -67,8 +58,8 @@ public class TimerFragment extends Fragment {
                 timerView.setText(newText);
             }
         };
-
-        if (!viewModel.isSharPrefEmpty()) {
+        if (viewModel.isRunning()) {
+            viewModel.resumeTimer();
             subscribe(elapsedTimeObserver);
             startButton.setText("Save");
         }
@@ -86,12 +77,14 @@ public class TimerFragment extends Fragment {
                 unsubscribe(elapsedTimeObserver);
                 startButton.setText("Start");
             }
-
         });
 
         cancelButton.setOnClickListener(v -> {
-            unsubscribe(elapsedTimeObserver);
-            startButton.setText("Start");
+            if (viewModel.isRunning()) {
+                unsubscribe(elapsedTimeObserver);
+                startButton.setText("Start");
+                viewModel.stopTimer();
+            }
         });
 
         return view;
@@ -99,56 +92,6 @@ public class TimerFragment extends Fragment {
 
     private void save(long skillId, String time) {
         viewModel.saveTime(time, skillId);
-    }
-
-    //Method for the activity to check if it needs to load data or not
-    public long isSharedPrefEmpty() {
-        return sharedPreferences.getLong("seconds", 0);
-    }
-
-    //When activity is onPause
-    public void saveTime() {
-        Calendar calendar = Calendar.getInstance();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        long onPauseTime = calendar.getTimeInMillis();
-        editor.putLong("seconds", seconds);
-        editor.putLong("onPauseTime", onPauseTime);
-        editor.putLong("startTime", startedTime);
-        editor.putBoolean("isRunning", isRunning);
-        editor.apply();
-    }
-
-    public void retrieveTime() {
-        Calendar calendar = Calendar.getInstance();
-        long onRelaunchTime = calendar.getTimeInMillis();
-        long onPauseTime = sharedPreferences.getLong("onPauseTime", 0);
-        isRunning = sharedPreferences.getBoolean("isRunning", false);
-        long retrievedSeconds = sharedPreferences.getLong("seconds", 0);
-        if (isRunning) {
-            Log.d(TAG, "retrieveTime: isRunning!");
-            //view.updateButtonName("SAVE");
-            seconds = (retrievedSeconds + ((onRelaunchTime - onPauseTime)/1000));
-            String time = getTime(seconds);
-            //view.updateTimerView(time);
-
-        }
-    }
-
-    //When save button is clicked. Saves to database
-    public void saveData() {
-        Log.d(TAG, "saveData: data is saved");
-        Calendar calendar = Calendar.getInstance();
-        long stoppedTime = calendar.getTimeInMillis();
-        long timeSpent = stoppedTime - startedTime;
-        //started stopped spent
-    }
-
-    private String getTime(long seconds) {
-        long hours = seconds / 3600;
-        long minutes = (seconds % 3600) / 60;
-        long secs = seconds % 60;
-        return String.format(Locale.getDefault(),
-                "%d:%02d:%02d", hours, minutes, secs);
     }
 
     private void subscribe(Observer<Long> observer) {
@@ -160,7 +103,26 @@ public class TimerFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        viewModel.sharedPrefSave();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        //viewModel.retrievePrefs();
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
 }

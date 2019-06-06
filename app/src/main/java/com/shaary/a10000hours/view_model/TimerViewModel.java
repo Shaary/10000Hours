@@ -4,12 +4,11 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.shaary.a10000hours.model.Repository;
 import com.shaary.a10000hours.model.Session;
@@ -22,27 +21,47 @@ import java.util.TimerTask;
 
 public class TimerViewModel extends AndroidViewModel {
     private static final int ONE_SECOND = 1000;
+    private static final String TIME = "TIME";
+    private static final String TAG = TimerViewModel.class.getSimpleName();
 
     private Repository repository;
     private SharedPreferences sharedPreferences;
 
     private MutableLiveData<Long> mElapsedTime = new MutableLiveData<>();
 
-    private long mInitialTime;
+    private long mInitialTime = 0;
+    private boolean isRunning;
     private Timer timer;
 
     public TimerViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application);
+        isRunning = sharedPreferences.getBoolean("is running", false);
+        Log.d(TAG, "TimerViewModel: start is running " + isRunning);
     }
 
     public void startTimer() {
+        isRunning = true;
 
         mInitialTime = SystemClock.elapsedRealtime();
 
         timer = new Timer();
+
         // Update the elapsed time every second.
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                final long newValue = (SystemClock.elapsedRealtime() - mInitialTime) / ONE_SECOND;
+                // setValue() cannot be called from a background thread so post to main thread.
+                mElapsedTime.postValue(newValue);
+            }
+        }, ONE_SECOND, ONE_SECOND);
+    }
+
+    public void resumeTimer() {
+        timer = new Timer();
+        mInitialTime = sharedPreferences.getLong("initial time", 0);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -56,12 +75,16 @@ public class TimerViewModel extends AndroidViewModel {
     public void stopTimer() {
         timer.cancel();
         timer = null;
+        isRunning = false;
+        mInitialTime = 0;
     }
 
     public LiveData<Long> getElapsedTime() {
         return mElapsedTime;
     }
 
+
+    // Saves to DB
     public void saveTime(String time, long skillId) {
         Session session = new Session(skillId, time, new Date());
         repository.insertSession(session);
@@ -82,16 +105,29 @@ public class TimerViewModel extends AndroidViewModel {
     }
 
     public void sharedPrefSave() {
-        sharedPreferences.edit().putLong("initial time", mInitialTime).apply();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        Log.d(TAG, "sharedPrefSave: is running " + isRunning);
+        editor.putBoolean("is running", isRunning);
+        if (isRunning) {
+            editor.putLong("initial time", mInitialTime);
+        }
+        Log.d(TAG, "sharedPrefSave: is running " + isRunning);
+        editor.apply();
     }
 
-    public String retrieveTime() {
+    public void retrievePrefs() {
         mInitialTime = sharedPreferences.getLong("initial time", 0);
-        long totalTime = SystemClock.elapsedRealtime() - mInitialTime;
-        return timeFormat(totalTime);
+        isRunning = sharedPreferences.getBoolean("is running", false);
+        Log.d(TAG, "retrievePrefs: is running " + isRunning);
     }
 
-    public boolean isSharPrefEmpty() {
-        return mInitialTime == 0;
+    public boolean isRunning() {
+        return isRunning;
     }
+
+    public long getmInitialTime() {
+        return mInitialTime;
+    }
+
 }
